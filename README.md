@@ -1,1 +1,1 @@
-# EduFlow
+EduFlow is a comprehensive study management platform designed to help students streamline their academic responsibilities and stay organized throughout the semester. EduFlow allows users to manage courses, track assignment and quiz deadlines, monitor study progress, and schedule study routines, with an emphasis on reminders and progress tracking.
