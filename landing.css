@@ -11,36 +11,43 @@ body {
     color: #333;
 }
 
-header {
-    background: #202020;
-    color: #fff;
-    padding: 10px 0;
-}
-
-header nav {
+.navbar {
+    background-color: rgb(32, 32, 32);
+    box-shadow: 0 2px 4px rgba(255, 255, 255, 0.9);
+  }
+  
+  .nav-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 1rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0 20px;
-}
-
-header .logo h1 {
-    font-size: 1.8rem;
-}
-
-header ul {
-    list-style: none;
+  }
+  
+  .logo-text {
+    font-size: 1.25rem;
+    font-weight: bold;
+    color: #ffffff;
+  }
+  
+  .nav-links {
     display: flex;
-}
-
-header ul li {
-    margin-left: 20px;
-}
-
-header ul li a {
-    color: #fff;
+    gap: 2rem;
+    list-style: none;
+  }
+  
+  .nav-links a {
     text-decoration: none;
-}
+    color: #ffffff;
+    font-size: 0.875rem;
+    font-weight: 500;
+    transition: color 0.2s;
+  }
+  
+  .nav-links a:hover {
+    color: #4185fa;
+  }
 
 .hero {
     background: url('images/Landing1.jpg') no-repeat center center fixed;
