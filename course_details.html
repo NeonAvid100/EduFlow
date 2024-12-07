@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EduFlow - Course Details</title>
+    <link rel="stylesheet" href="course_details.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">EduFlow</div>
+        <ul class="nav-links">
+            <li><a href="#dashboard">Dashboard</a></li>
+            <li><a href="#courses">Courses</a></li>
+            <li><a href="#assignments">Assignments</a></li>
+            <li><a href="#quizzes">Quizzes</a></li>
+            <li><a href="#schedule">Schedule</a></li>
+            <li><a href="#profile">Profile</a></li>
+        </ul>
+    </nav>
+
+    <main class="course-details-main">
+        <div class="course-details-header">
+            <h2>Course:CSE490 <br>Cyber Security</h2>
+        </div>
+
+        <div class="tabs">
+            <button class="tablinks" onclick="openTab(event, 'assignments')">Assignments</button>
+            <button class="tablinks" onclick="openTab(event, 'quizzes')">Quizzes</button>
+        </div>
+    
+        <div id="syllabus" class="tabcontent"><a href="#">
+            <h3>Syllabus</h3></a>
+            <p>Course details, objectives, and structure.</p>
+        </div>
+        <div class="Merhge"><a href="#">
+          <div id="syllabus" class="tabcontent">
+            <h3>Study Materials</h3></a>
+            <p>Materials and resources to study for the course.</p>
+          </div>
+        </div>
+        <div id="assignments" class="tabcontent">
+            <h3>Assignments</h3>
+            <p>List of assignments for the course.</p>
+        </div>
+
+        <div id="quizzes" class="tabcontent">
+            <h3>Quizzes</h3>
+            <p>Upcoming quizzes and their details.</p>
+        </div>
+        </div>
+    </main>
+</body>
+</html>
