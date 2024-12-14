@@ -60,7 +60,7 @@ body {
 }
 
 .page-header {
-    background: linear-gradient(135deg, #3d84ff 0%, #1a56b3 100%);
+    background: linear-gradient(135deg, #3d84ff 0%, #0c264d 100%);
     margin: -20px -20px 30px;
     padding: 40px 20px;
     border-radius: 0 0 20px 20px;
@@ -105,26 +105,55 @@ body {
     box-shadow: 0 4px 8px rgba(0,0,0,0.15);
 }
 
-.events-list {
+.events-container {
+    display: flex;
+    gap: 30px;
+    margin-top: 20px;
+    max-width: 1400px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.events-sidebar {
+    width: 300px;
+    flex-shrink: 0;
+    background: white;
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    border: 1px solid #eef2f7;
+    position: sticky;
+    top: 20px;
+    max-height: calc(100vh - 40px);
+    overflow-y: auto;
+}
+
+.main-events {
+    flex-grow: 1;
+}
+
+#eventsList {
     display: flex;
     flex-direction: column;
     gap: 20px;
-    max-width: 800px;
-    margin: 0 auto;
 }
 
 .event-box {
-    background-color: white;
+    background: white;
     padding: 25px;
-    border-radius: 12px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
     cursor: pointer;
     transition: all 0.3s ease;
     border: 1px solid #eef2f7;
     width: 100%;
-    display: flex;
-    flex-direction: column;
     position: relative;
+}
+
+.event-box:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.08);
+    border-color: #3d84ff;
 }
 
 .event-header {
@@ -141,6 +170,27 @@ body {
     flex-grow: 1;
     padding-right: 10px;
     word-wrap: break-word;
+}
+
+.event-box p {
+    color: #6c757d;
+    margin: 0 0 15px;
+    line-height: 1.5;
+}
+
+.event-time {
+    color: #3d84ff;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 15px;
+}
+
+.event-time::before {
+    content: "\f017";
+    font-family: "Font Awesome 5 Free";
+    font-weight: 400;
 }
 
 .edit-icon {
@@ -170,32 +220,6 @@ body {
     font-size: 1.1rem;
 }
 
-.event-box p {
-    color: #64748b;
-    font-size: 0.95rem;
-    line-height: 1.6;
-    flex-grow: 1;
-    word-wrap: break-word;
-    overflow-wrap: break-word;
-}
-
-.event-time {
-    margin-top: auto;
-    padding-top: 15px;
-    color: #3d84ff;
-    font-size: 0.9rem;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    flex-shrink: 0;
-}
-
-.event-box:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 8px 16px rgba(0,0,0,0.1);
-    border-color: #3d84ff;
-}
-
 .event-link,
 .event-link-container a {
     position: relative;
@@ -221,6 +245,49 @@ body {
 .event-link i,
 .event-link-container i {
     font-size: 0.9em;
+}
+
+.checkbox-group {
+    margin: 15px 0;
+}
+
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    user-select: none;
+}
+
+.checkbox-label input[type="checkbox"] {
+    margin-right: 8px;
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+}
+
+.checkbox-text {
+    font-size: 0.95rem;
+    color: #2c3e50;
+}
+
+.event-box.completed {
+    background-color: #f8f9fa;
+    border-color: #e9ecef;
+}
+
+.event-box.completed::before {
+    content: "✓";
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    color: #28a745;
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+
+.event-box.completed h3,
+.event-box.completed p {
+    color: #6c757d;
 }
 
 .modal {
@@ -288,6 +355,25 @@ body {
 
 .modal-content h2 i {
     color: #3d84ff;
+}
+
+.modal-content h2 {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid #eef2f7;
+}
+
+.modal-content h2 .edit-icon {
+    opacity: 1;
+    margin-left: 10px;
+}
+
+.modal-content h2 .edit-icon:hover {
+    color: #3d84ff;
+    transform: translateY(-1px);
 }
 
 .form-group {
@@ -413,12 +499,132 @@ body {
     overflow-wrap: break-word;
 }
 
+.completed-events-section,
+.missed-events-section {
+    margin-bottom: 30px;
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 12px;
+    border: 1px solid #eef2f7;
+}
+
+.completed-events-section {
+    background: linear-gradient(to bottom right, #f3f9f4, #ffffff);
+    border-color: #d1e7dd;
+}
+
+.missed-events-section {
+    background: linear-gradient(to bottom right, #fff5f5, #ffffff);
+    border-color: #f5c2c7;
+}
+
+.completed-events-section h3,
+.missed-events-section h3 {
+    color: #2c3e50;
+    font-size: 1.1rem;
+    margin-bottom: 15px;
+    padding-bottom: 12px;
+    border-bottom: 2px solid #eef2f7;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.completed-events-section h3::before {
+    content: "✓";
+    color: #28a745;
+    font-weight: bold;
+}
+
+.missed-events-section h3::before {
+    content: "!";
+    color: #dc3545;
+    font-weight: bold;
+}
+
+.sidebar-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.sidebar-event {
+    padding: 12px 16px;
+    border-radius: 8px;
+    background: white;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 0.95rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+    border: 1px solid transparent;
+}
+
+.sidebar-event:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+}
+
+.sidebar-event-content {
+    flex-grow: 1;
+}
+
+.sidebar-event-title {
+    font-weight: 500;
+    margin-bottom: 4px;
+}
+
+.sidebar-event-date {
+    font-size: 0.8rem;
+    opacity: 0.7;
+}
+
+.sidebar-event.completed {
+    color: #17b46b;
+    border-color: #d1e7dd;
+}
+
+.sidebar-event.completed::before {
+    content: "✓";
+    font-weight: bold;
+    background: #c9eedd;
+    color: #0c442a;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    font-size: 0.8rem;
+}
+
+.sidebar-event.missed {
+    color: #dc3545;
+    border-color: #f5c2c7;
+}
+
+.sidebar-event.missed::before {
+    content: "!";
+    font-weight: bold;
+    background: #f8d7da;
+    color: #842029;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    font-size: 0.8rem;
+}
+
 @media screen and (max-width: 1024px) {
     .container {
         padding: 15px;
     }
 
-    .events-list {
+    #eventsList {
         gap: 15px;
     }
 

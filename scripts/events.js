@@ -3,6 +3,8 @@ const eventModal = document.getElementById('eventModal');
 const viewEventModal = document.getElementById('viewEventModal');
 const eventForm = document.getElementById('eventForm');
 const eventsList = document.getElementById('eventsList');
+const completedEventsList = document.getElementById('completedEventsList');
+const missedEventsList = document.getElementById('missedEventsList');
 const closeButtons = document.querySelectorAll('.close');
 const deleteEventBtn = document.getElementById('deleteEventBtn');
 
@@ -47,7 +49,8 @@ eventForm.addEventListener('submit', (e) => {
         title: document.getElementById('eventTitle').value,
         description: document.getElementById('eventDescription').value,
         link: document.getElementById('eventLink').value,
-        dateTime: document.getElementById('eventDateTime').value
+        dateTime: document.getElementById('eventDateTime').value,
+        completed: document.getElementById('eventCompleted').checked
     };
 
     if (isEditing) {
@@ -69,28 +72,56 @@ eventForm.addEventListener('submit', (e) => {
 
 function renderEvents() {
     eventsList.innerHTML = '';
-
+    completedEventsList.innerHTML = '';
+    missedEventsList.innerHTML = '';
+    
+    const currentDate = new Date();
+    
+    // Sort events by date
     events.sort((a, b) => new Date(a.dateTime) - new Date(b.dateTime));
     
     events.forEach(event => {
-        const eventBox = document.createElement('div');
-        eventBox.className = 'event-box';
-        eventBox.innerHTML = `
-            <div class="event-header">
-                <h3>${event.title}</h3>
-                <button class="edit-icon" onclick="editEvent(event, ${event.id})">
-                    <i class="fas fa-edit"></i>
-                </button>
-            </div>
-            <p>${event.description.substring(0, 100)}${event.description.length > 100 ? '...' : ''}</p>
-            ${event.link ? `<a href="${event.link}" class="event-link" target="_blank" onclick="event.stopPropagation()">
-                <i class="fas fa-external-link-alt"></i> Follow the link
-            </a>` : ''}
-            <div class="event-time">${formatDateTime(event.dateTime)}</div>
-        `;
+        const eventDate = new Date(event.dateTime);
+        const isMissed = !event.completed && eventDate < currentDate;
         
-        eventBox.addEventListener('click', () => showEventDetails(event));
-        eventsList.appendChild(eventBox);
+        // Render in main list only if not completed and not missed
+        if (!event.completed && !isMissed) {
+            const eventBox = document.createElement('div');
+            eventBox.className = 'event-box';
+            eventBox.innerHTML = `
+                <div class="event-header">
+                    <h3>${event.title}</h3>
+                    <button class="edit-icon" onclick="editEvent(event, ${event.id})">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                </div>
+                <p>${event.description.substring(0, 100)}${event.description.length > 100 ? '...' : ''}</p>
+                ${event.link ? `<a href="${event.link}" class="event-link" target="_blank" onclick="event.stopPropagation()">
+                    <i class="fas fa-external-link-alt"></i> Follow the link
+                </a>` : ''}
+                <div class="event-time">${formatDateTime(event.dateTime)}</div>
+            `;
+            eventBox.addEventListener('click', () => showEventDetails(event));
+            eventsList.appendChild(eventBox);
+        }
+        
+        // Create sidebar event element
+        const sidebarEvent = document.createElement('div');
+        sidebarEvent.className = `sidebar-event ${event.completed ? 'completed' : isMissed ? 'missed' : ''}`;
+        sidebarEvent.innerHTML = `
+            <div class="sidebar-event-content">
+                <div class="sidebar-event-title">${event.title}</div>
+                <div class="sidebar-event-date">${formatSidebarDate(event.dateTime)}</div>
+            </div>
+        `;
+        sidebarEvent.addEventListener('click', () => showEventDetails(event));
+        
+        // Add to appropriate sidebar list
+        if (event.completed) {
+            completedEventsList.appendChild(sidebarEvent);
+        } else if (isMissed) {
+            missedEventsList.appendChild(sidebarEvent);
+        }
     });
 }
 
@@ -105,6 +136,7 @@ function editEvent(e, eventId) {
         document.getElementById('eventDescription').value = event.description;
         document.getElementById('eventLink').value = event.link || '';
         document.getElementById('eventDateTime').value = event.dateTime;
+        document.getElementById('eventCompleted').checked = event.completed || false;
         
         const submitBtn = eventForm.querySelector('.submit-btn');
         submitBtn.textContent = 'Save Changes';
@@ -116,6 +148,19 @@ function editEvent(e, eventId) {
 function showEventDetails(event) {
     document.getElementById('viewEventTitle').textContent = event.title;
     document.getElementById('viewEventDescription').textContent = event.description;
+    
+    const titleContainer = document.getElementById('viewEventTitle').parentElement;
+    if (!titleContainer.querySelector('.edit-icon')) {
+        const editButton = document.createElement('button');
+        editButton.className = 'edit-icon';
+        editButton.innerHTML = '<i class="fas fa-edit"></i>';
+        editButton.onclick = (e) => {
+            e.stopPropagation();
+            viewEventModal.style.display = 'none';
+            editEvent(e, event.id);
+        };
+        titleContainer.appendChild(editButton);
+    }
     
     const linkContainer = document.getElementById('viewEventLink');
     if (event.link) {
@@ -151,6 +196,14 @@ function formatDateTime(dateTime) {
         minute: '2-digit'
     };
     return new Date(dateTime).toLocaleDateString('en-US', options);
+}
+
+function formatSidebarDate(dateTime) {
+    const date = new Date(dateTime);
+    const month = date.toLocaleString('default', { month: 'short' });
+    const day = date.getDate();
+    const year = date.getFullYear();
+    return `${month} ${day}, ${year}`;
 }
 
 renderEvents();

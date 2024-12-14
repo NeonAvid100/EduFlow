@@ -32,7 +32,22 @@
             </div>
         </header>
 
-        <div id="eventsList" class="events-list">
+        <div class="content">
+            <div class="events-container">
+                <div class="events-sidebar">
+                    <div class="completed-events-section">
+                        <h3>Completed</h3>
+                        <div id="completedEventsList" class="sidebar-list"></div>
+                    </div>
+                    <div class="missed-events-section">
+                        <h3>Missed</h3>
+                        <div id="missedEventsList" class="sidebar-list"></div>
+                    </div>
+                </div>
+                <div class="main-events">
+                    <div id="eventsList"></div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -56,6 +71,12 @@
                 <div class="form-group">
                     <label for="eventDateTime">Date & Time</label>
                     <input type="datetime-local" id="eventDateTime" required>
+                </div>
+                <div class="form-group checkbox-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="eventCompleted">
+                        <span class="checkbox-text">Mark as completed</span>
+                    </label>
                 </div>
                 <button type="submit" class="submit-btn">
                     <i class="fas fa-save"></i> Save Event
