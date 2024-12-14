@@ -1,49 +1,38 @@
-* {
+/* General Reset */
+*{
     margin: 0;
     padding: 0;
     box-sizing: border-box;
   }
   
+  /* Background Image */
   body {
-   
-    background-size:auto;
+    background: url('../images/Signup.jpg') no-repeat center center fixed;
+    background-size: cover;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
     height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
-    
   }
   
-  .login-page {
-    background: rgba(207, 207, 207, 0.5); 
-    background: url('./images/Login.jpg') no-repeat center center fixed;
-    background-size: cover;
-    width: 100%;
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    
-  }
   
-  .login-container {
+  .register-container {
     background: #fff;
     padding: 40px;
     border-radius: 8px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
     max-width: 400px;
     width: 100%;
-    
   }
   
   h2 {
     text-align: center;
     margin-bottom: 30px;
     color: #3d84ff;
-
   }
   
+  /* Input Fields */
   .input-group {
     margin-bottom: 20px;
   }
@@ -51,7 +40,7 @@
   .input-group label {
     display: block;
     font-size: 14px;
-    color: #1f1f1f;
+    color: #555;
     margin-bottom: 5px;
   }
   
@@ -64,15 +53,16 @@
   }
   
   .input-group input:focus {
-    border-color: #2575fc;
+    border-color: #3d84ff;
     outline: none;
   }
   
+  /* Buttons */
   button {
     width: 100%;
     padding: 12px;
-    background-color: #ff2e2e;
-    color: rgb(255, 255, 255);
+    background-color: #0daf3e;
+    color: white;
     border: none;
     border-radius: 4px;
     font-size: 16px;
@@ -80,29 +70,15 @@
   }
   
   button:hover {
-    background-color: #0daf3e;
+    background-color: #3d84ff;
   }
   
-  .links1 {
-    margin-top: 15px;
-  }
-    
-  .links1 a {
-    color: #a5a7aa;
-    text-decoration: none;
-    font-size: 14px;
-  }
-  
-  .links1 a:hover {
-    text-decoration: underline;
-    color: #3d84ff;
-  }
-
+  /* Links */
   .links {
     margin-top: 15px;
     text-align: center;
   }
-    
+  
   .links a {
     color: #3d84ff;
     text-decoration: none;
@@ -110,5 +86,4 @@
   }
   
   .links a:hover {
-    text-decoration: underline;
-  }
+    text-decoration: underline;}
