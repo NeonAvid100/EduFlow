@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>EduFlow - Events & Tasks</title>
     <link rel="stylesheet" href="styles/events.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
@@ -23,10 +23,13 @@
     </nav>
 
     <div class="container">
-        <header>
-            <h1>Events & Tasks</h1>
-            <button id="addEventBtn" class="add-btn">
-                <i class="fas fa-plus"></i>Add New Event</button>
+        <header class="page-header">
+            <div class="header-content">
+                <h1><i class="fas fa-calendar-alt"></i> Events & Tasks</h1>
+                <button id="addEventBtn" class="add-btn">
+                    <i class="fas fa-plus"> </i> Add New Event
+                </button>
+            </div>
         </header>
 
         <div id="eventsList" class="events-list">
@@ -36,21 +39,27 @@
     <div id="eventModal" class="modal">
         <div class="modal-content">
             <span class="close">&times;</span>
-            <h2>New Event</h2>
+            <h2><i class="fas fa-calendar-plus"></i>Event/Task</h2>
             <form id="eventForm">
                 <div class="form-group">
-                    <label for="eventTitle">Title:</label>
+                    <label for="eventTitle">Title</label>
                     <input type="text" id="eventTitle" required>
                 </div>
                 <div class="form-group">
-                    <label for="eventDescription">Description:</label>
+                    <label for="eventDescription">Description</label>
                     <textarea id="eventDescription" required></textarea>
                 </div>
                 <div class="form-group">
-                    <label for="eventDateTime">Date & Time:</label>
+                    <label for="eventLink">Link (Optional)</label>
+                    <input type="url" id="eventLink" placeholder="https://example.com">
+                </div>
+                <div class="form-group">
+                    <label for="eventDateTime">Date & Time</label>
                     <input type="datetime-local" id="eventDateTime" required>
                 </div>
-                <button type="submit" class="submit-btn">Save Event</button>
+                <button type="submit" class="submit-btn">
+                    <i class="fas fa-save"></i> Save Event
+                </button>
             </form>
         </div>
     </div>
@@ -60,10 +69,13 @@
             <span class="close">&times;</span>
             <div id="eventDetails">
                 <h2 id="viewEventTitle"></h2>
-                <p id="viewEventDateTime"></p>
-                <p id="viewEventDescription"></p>
+                <div class="event-datetime" id="viewEventDateTime"></div>
+                <p id="viewEventDescription" class="event-description"></p>
+                <div id="viewEventLink" class="event-link-container"></div>
             </div>
-            <button id="deleteEventBtn" class="delete-btn">Delete Event</button>
+            <button id="deleteEventBtn" class="delete-btn">
+                <i class="fas fa-trash-alt"></i> Delete Event
+            </button>
         </div>
     </div>
     <script src="scripts/events.js"></script>
