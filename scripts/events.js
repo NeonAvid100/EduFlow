@@ -116,7 +116,6 @@ function renderEvents() {
         `;
         sidebarEvent.addEventListener('click', () => showEventDetails(event));
         
-        // Add to appropriate sidebar list
         if (event.completed) {
             completedEventsList.appendChild(sidebarEvent);
         } else if (isMissed) {
@@ -205,5 +204,113 @@ function formatSidebarDate(dateTime) {
     const year = date.getFullYear();
     return `${month} ${day}, ${year}`;
 }
+
+class NotificationSystem {
+    constructor() {
+        this.notifications = [];
+        this.unreadCount = 0;
+        this.init();
+    }
+
+    init() {
+        this.notificationList = document.querySelector('.notification-list');
+        this.notificationBadge = document.querySelector('.notification-badge');
+        this.setupEventListeners();
+        this.checkEventReminders();
+        setInterval(() => this.checkEventReminders(), 60000);
+    }
+
+    setupEventListeners() {
+        const tabs = document.querySelectorAll('.notification-tabs button');
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                tabs.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                this.filterNotifications(tab.textContent.toLowerCase());
+            });
+        });
+    }
+
+    addNotification(notification) {
+        this.notifications.unshift({
+            ...notification,
+            id: Date.now(),
+            read: false,
+            time: new Date()
+        });
+        this.unreadCount++;
+        this.updateNotificationDot();
+        this.renderNotifications();
+    }
+
+    markAsRead(id) {
+        const notification = this.notifications.find(n => n.id === id);
+        if (notification && !notification.read) {
+            notification.read = true;
+            this.unreadCount--;
+            this.updateNotificationDot();
+            this.renderNotifications();
+        }
+    }
+
+    updateNotificationDot() {
+        if (this.unreadCount > 0) {
+            document.querySelector('.notification-dot').style.display = 'block';
+        } else {
+            document.querySelector('.notification-dot').style.display = 'none';
+        }
+    }
+
+    filterNotifications(filter) {
+        const notifications = filter === 'unread' 
+            ? this.notifications.filter(n => !n.read)
+            : this.notifications;
+        this.renderNotifications(notifications);
+    }
+
+    renderNotifications(notifications = this.notifications) {
+        this.notificationList.innerHTML = notifications.map(notification => `
+            <div class="notification-item ${notification.read ? '' : 'notification-unread'}"
+                 onclick="notificationSystem.markAsRead(${notification.id})">
+                <div class="notification-content">
+                    <div class="notification-title">${notification.title}</div>
+                    <div class="notification-time">${this.formatTime(notification.time)}</div>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    formatTime(date) {
+        const now = new Date();
+        const diff = now - date;
+        const minutes = Math.floor(diff / 60000);
+        const hours = Math.floor(minutes / 60);
+        const days = Math.floor(hours / 24);
+        if (minutes < 60) return `${minutes} minutes ago`;
+        if (hours < 24) return `${hours} hours ago`;
+        return `${days} days ago`;
+    }
+
+    checkEventReminders() {
+        const events = document.querySelectorAll('.event-card');
+        events.forEach(event => {
+            const deadlineStr = event.querySelector('.event-deadline').textContent;
+            console.log('Deadline String:', deadlineStr);
+            const deadline = new Date(deadlineStr);
+            const now = new Date();
+            const hoursUntilDeadline = (deadline - now) / (1000 * 60 * 60);
+
+            if (hoursUntilDeadline <= 3 && hoursUntilDeadline > 0) {
+                const title = event.querySelector('.event-title').textContent;
+                this.addNotification({
+                    title: `Reminder: "${title}" is due in ${Math.round(hoursUntilDeadline)} hours`,
+                    type: 'reminder'
+                });
+            }
+        });
+    }
+}
+
+const notificationSystem = new NotificationSystem();
 
 renderEvents();

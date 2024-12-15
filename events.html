@@ -10,14 +10,35 @@
 <body>
     <nav class="navbar">
         <div class="nav-content">
-            <div class="logo-text">EduFlow</div>
+            <div class="logo">
+                <a href="idx.html" class="logo-link">
+                    <span class="logo-text">Edu<i class="fas fa-graduation-cap logo-icon"></i></span>
+                    <span class="logo-text">Flow</span>
+                </a>
+            </div>
             <ul class="nav-links">
-                <li><a href="idx.html">Dashboard</a></li>
                 <li><a href="course_list.html">Courses</a></li>
                 <li><a href="#assignments">Assignments</a></li>
                 <li><a href="#quizzes">Quizzes</a></li>
                 <li><a href="events.html" class="active">Events</a></li>
                 <li><a href="#profile">Profile</a></li>
+                <li class="notification-container">
+                    <a href="#" class="notification-icon">
+                        <i class="fas fa-bell"></i>
+                        <span class="notification-dot" style="display: none;"></span>
+                    </a>
+                    <div class="notification-dropdown">
+                        <div class="notification-header">
+                            <h3>Notifications</h3>
+                            <div class="notification-tabs">
+                                <button class="active">All</button>
+                                <button>Unread</button>
+                            </div>
+                        </div>
+                        <div class="notification-list">
+                        </div>
+                    </div>
+                </li>
             </ul>
         </div>
     </nav>
@@ -45,6 +66,7 @@
                     </div>
                 </div>
                 <div class="main-events">
+                    <h1 style="font-size: 32px; text-align: center;  margin-bottom: 18px;">Upcoming</h1>
                     <div id="eventsList"></div>
                 </div>
             </div>
@@ -53,8 +75,12 @@
 
     <div id="eventModal" class="modal">
         <div class="modal-content">
-            <span class="close">&times;</span>
-            <h2><i class="fas fa-calendar-plus"></i>Event/Task</h2>
+            <div class="modal-header">
+                <div class="modal-title">
+                    <h2>Event/Task</h2>
+                </div>
+                <span class="close">&times;</span>
+            </div>
             <form id="eventForm">
                 <div class="form-group">
                     <label for="eventTitle">Title</label>
@@ -75,7 +101,7 @@
                 <div class="form-group checkbox-group">
                     <label class="checkbox-label">
                         <input type="checkbox" id="eventCompleted">
-                        <span class="checkbox-text">Mark as completed</span>
+                        <span class="checkbox-text">Mark as complete</span>
                     </label>
                 </div>
                 <button type="submit" class="submit-btn">
@@ -87,9 +113,13 @@
 
     <div id="viewEventModal" class="modal">
         <div class="modal-content">
-            <span class="close">&times;</span>
+            <div class="modal-header">
+                <div class="modal-title">
+                    <h2 id="viewEventTitle"></h2>
+                </div>
+                <span class="close">&times;</span>
+            </div>
             <div id="eventDetails">
-                <h2 id="viewEventTitle"></h2>
                 <div class="event-datetime" id="viewEventDateTime"></div>
                 <p id="viewEventDescription" class="event-description"></p>
                 <div id="viewEventLink" class="event-link-container"></div>
