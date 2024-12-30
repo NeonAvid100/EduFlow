@@ -35,10 +35,12 @@ function getCourseDetails($conn, $courseName, $userId) {
     $details = [];
 
     // Fetch assignments
-    $stmt = $conn->prepare("SELECT title, question, deadline FROM assignment WHERE c_name = ? AND id = ?");
+    $stmt = $conn->prepare("SELECT title, question, deadline, assignment_id FROM assignment WHERE c_name = ? AND id = ? AND status = 'pending'");
     $stmt->bind_param("si", $courseName, $userId);
     $stmt->execute();
-    $details['assignments'] = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    $result = $stmt->get_result();
+    $details['assignments'] = $result->fetch_all(MYSQLI_ASSOC);
+    $stmt->close();
 
     // Fetch quizzes
     $stmt = $conn->prepare("SELECT q_title, q_description, q_date FROM quiz WHERE c_name = ? AND user_id = ?");
@@ -57,10 +59,50 @@ function getCourseDetails($conn, $courseName, $userId) {
 
 $courses = getCourses($conn, $userId);
 
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['completed_assignments'])) {
+    $completedAssignments = $_POST['completed_assignments'];
+    foreach ($completedAssignments as $assignmentId) {
+        $stmt = $conn->prepare("UPDATE assignment SET status = 'Done' WHERE assignment_id = ?");
+        $stmt->bind_param("i", $assignmentId);
+        $stmt->execute();
+    }
+    header("Location: ?course_name=" . urlencode($_GET['course_name']));
+    exit;
+}
+
 if (isset($_GET['course_name'])) {
     $courseName = $_GET['course_name'];
     $courseDetails = getCourseDetails($conn, $courseName, $userId);
 }
+
+function getAssignmentsAndQuizzes($conn, $userId, $date) {
+    $stmt = $conn->prepare("
+        SELECT a.title, a.deadline AS due_date, a.c_name AS course_name, 'assignment' AS type 
+        FROM assignment a 
+        JOIN course c ON a.c_name = c.c_name 
+        WHERE c.id = ? AND a.deadline = ? AND a.status = 'pending'
+        UNION
+        SELECT q.q_title AS title, q.q_date AS due_date, q.c_name AS course_name, 'quiz' AS type 
+        FROM quiz q 
+        JOIN course c ON q.c_name = c.c_name 
+        WHERE q.user_id = ? AND q.q_date = ?
+    ");
+    $stmt->bind_param("isis", $userId, $date, $userId, $date);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    return $result->fetch_all(MYSQLI_ASSOC);
+}
+
+$courses = getCourses($conn, $userId);
+
+$today = date('Y-m-d');
+$tomorrow = date('Y-m-d', strtotime('+1 day'));
+$dayAfterTomorrow = date('Y-m-d', strtotime('+2 days'));
+
+$todayTasks = getAssignmentsAndQuizzes($conn, $userId, $today);
+$tomorrowTasks = getAssignmentsAndQuizzes($conn, $userId, $tomorrow);
+$dayAfterTomorrowTasks = getAssignmentsAndQuizzes($conn, $userId, $dayAfterTomorrow);
+
 ?>
 
 <!DOCTYPE html>
@@ -69,6 +111,40 @@ if (isset($_GET['course_name'])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Course Dashboard</title>
+    <style>
+        body {
+            display: flex;
+        }
+        .content {
+            width: 70%;
+        }
+        .reminder {
+            width: 30%;
+            padding: 20px;
+            background-color: #f4f4f4;
+            border-left: 1px solid #ccc;
+        }
+        .reminder h2 {
+            margin-top: 0;
+        }
+        .task-list {
+            list-style-type: none;
+            padding: 0;
+        }
+        .task-list li {
+            margin-bottom: 10px;
+        }
+        .course-details form {
+            margin-top: 20px;
+        }
+        .assignments label {
+            display: flex;
+            align-items: center;
+        }
+        .assignments input[type="checkbox"] {
+            margin-right: 10px;
+        }
+    </style>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -93,17 +169,23 @@ if (isset($_GET['course_name'])) {
 
             <div class="assignments">
                 <h3>Assignments</h3>
-                <?php if (count($courseDetails['assignments']) > 0): ?>
-                    <ul>
-                        <?php foreach ($courseDetails['assignments'] as $assignment): ?>
-                            <li>
-                                <strong><?= htmlspecialchars($assignment['title']) ?>:</strong> <?= htmlspecialchars($assignment['question']) ?> (Deadline: <?= htmlspecialchars($assignment['deadline']) ?>)
-                            </li>
-                        <?php endforeach; ?>
-                    </ul>
-                <?php else: ?>
-                    <p>No assignments available for this course.</p>
-                <?php endif; ?>
+                <form method="POST">
+                    <?php if (count($courseDetails['assignments']) > 0): ?>
+                        <ul>
+                            <?php foreach ($courseDetails['assignments'] as $assignment): ?>
+                                <li>
+                                    <label>
+                                        <input type="checkbox" name="completed_assignments[]" value="<?= $assignment['assignment_id'] ?>">
+                                        <strong><?= htmlspecialchars($assignment['title']) ?>:</strong> <?= htmlspecialchars($assignment['question']) ?> (Deadline: <?= htmlspecialchars($assignment['deadline']) ?>)
+                                    </label>
+                                </li>
+                            <?php endforeach; ?>
+                        </ul>
+                    <?php else: ?>
+                        <p>No assignments available for this course.</p>
+                    <?php endif; ?>
+                    <button type="submit">Save Changes</button>
+                </form>
             </div>
 
             <div class="quizzes">
@@ -138,6 +220,33 @@ if (isset($_GET['course_name'])) {
             </div>
         </div>
         <?php endif; ?>
+    </div>
+    <div class="reminder">
+        <h2>Reminders</h2>
+        <div>
+            <h3>Today (<?php echo $today; ?>)</h3>
+            <ul class="task-list">
+                <?php foreach ($todayTasks as $task): ?>
+                    <li><?php echo $task['title'] . ' (' . $task['course_name'] . ')'; ?></li>
+                <?php endforeach; ?>
+            </ul>
+        </div>
+        <div>
+            <h3>Tomorrow (<?php echo $tomorrow; ?>)</h3>
+            <ul class="task-list">
+                <?php foreach ($tomorrowTasks as $task): ?>
+                    <li><?php echo $task['title'] . ' (' . $task['course_name'] . ')'; ?></li>
+                <?php endforeach; ?>
+            </ul>
+        </div>
+        <div>
+            <h3>Day After Tomorrow (<?php echo $dayAfterTomorrow; ?>)</h3>
+            <ul class="task-list">
+                <?php foreach ($dayAfterTomorrowTasks as $task): ?>
+                    <li><?php echo $task['title'] . ' (' . $task['course_name'] . ')'; ?></li>
+                <?php endforeach; ?>
+            </ul>
+        </div>
     </div>
 </body>
 </html>
