@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Dec 28, 2024 at 05:53 PM
+-- Generation Time: Dec 30, 2024 at 03:30 AM
 -- Server version: 10.4.22-MariaDB
 -- PHP Version: 8.1.2
 
@@ -191,6 +191,13 @@ CREATE TABLE `file_storage` (
   `c_name` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+--
+-- Dumping data for table `file_storage`
+--
+
+INSERT INTO `file_storage` (`upload_id`, `id`, `file_name`, `file_type`, `file_size`, `file_path`, `upload_date`, `title`, `c_name`) VALUES
+(12, 1, '6771e14baffb28.58775831.jpg', 'image/jpeg', 149907, 'uploads/6771e14baffb28.58775831.jpg', '2024-12-29 23:54:51', 'Reyna', 'Data Structures and Algorithms');
+
 -- --------------------------------------------------------
 
 --
@@ -209,12 +216,12 @@ CREATE TABLE `login` (
 --
 
 INSERT INTO `login` (`id`, `email`, `name`, `password`) VALUES
-(1, 'alice@example.com', 'Alice Johnson', 'password123'),
-(2, 'bob@example.com', 'Bob Smith', 'password456'),
-(3, 'carol@example.com', 'Carol Davis', 'password789'),
-(4, 'david@example.com', 'David Brown', 'password321'),
-(5, 'eve@example.com', 'Eve Wilson', 'password654'),
-(6, 'frank@example.com', 'Frank White', 'password987');
+(1, 'patkheterbatija@gmail.com', 'Alice Johnson', '$2y$10$ed6VMGBY7wcostlyA9LipOVB1ZJAX3/PxP/9D/5yNTBrbPi264BL6'),
+(2, 'damahadan415@gmail.com', 'Bob Smith', '$2y$10$ed6VMGBY7wcostlyA9LipOVB1ZJAX3/PxP/9D/5yNTBrbPi264BL6'),
+(3, 'zakirhossain197221@gmail.com', 'Carol Davis', '$2y$10$ed6VMGBY7wcostlyA9LipOVB1ZJAX3/PxP/9D/5yNTBrbPi264BL6'),
+(4, 'zonayed.hossain.siyam@g.bracu.ac.bd', 'David Brown', '$2y$10$ed6VMGBY7wcostlyA9LipOVB1ZJAX3/PxP/9D/5yNTBrbPi264BL6'),
+(5, 'nakajamal711@gmail.com', 'Eve Wilson', '$2y$10$ed6VMGBY7wcostlyA9LipOVB1ZJAX3/PxP/9D/5yNTBrbPi264BL6'),
+(6, 'frank@example.com', 'Frank White', '$2y$10$ed6VMGBY7wcostlyA9LipOVB1ZJAX3/PxP/9D/5yNTBrbPi264BL6');
 
 -- --------------------------------------------------------
 
@@ -370,13 +377,13 @@ ALTER TABLE `co_curriculars`
 -- AUTO_INCREMENT for table `file_storage`
 --
 ALTER TABLE `file_storage`
-  MODIFY `upload_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `upload_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT for table `login`
 --
 ALTER TABLE `login`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `quiz`
