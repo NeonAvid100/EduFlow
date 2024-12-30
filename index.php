@@ -30,31 +30,67 @@ function getCourses($conn, $userId) {
     return $result->fetch_all(MYSQLI_ASSOC);
 }
 
+function deletePastQuizzes($conn) {
+    $currentDate = date('Y-m-d');
+    $stmt = $conn->prepare("DELETE FROM quiz WHERE q_date < ?");
+    $stmt->bind_param("s", $currentDate);
+    $stmt->execute();
+}
+
 // Fetch assignments, quizzes, and files for a specific course
-function getCourseDetails($conn, $courseName, $userId) {
-    $details = [];
+if (isset($_GET['course_name'])) {
+    $courseName = $_GET['course_name'];
 
-    // Fetch assignments
-    $stmt = $conn->prepare("SELECT title, question, deadline, assignment_id FROM assignment WHERE c_name = ? AND id = ? AND status = 'pending'");
-    $stmt->bind_param("si", $courseName, $userId);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    $details['assignments'] = $result->fetch_all(MYSQLI_ASSOC);
-    $stmt->close();
+    // Fetch course details
+    function getCourseDetails($conn, $courseName, $userId) {
+        $details = [];
+    
+        // Fetch assignments
+        $stmt = $conn->prepare("SELECT title, question, deadline, assignment_id FROM assignment WHERE c_name = ? AND id = ? AND status = 'pending'");
+        $stmt->bind_param("si", $courseName, $userId);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $details['assignments'] = $result->fetch_all(MYSQLI_ASSOC);
+        $stmt->close();
+    
+        // Fetch quizzes
+        $currentDate = date('Y-m-d');
+        $stmt = $conn->prepare("SELECT q_title, q_description, q_date FROM quiz WHERE c_name = ? AND user_id = ? AND q_date >= ?");
+        $stmt->bind_param("sis", $courseName, $userId, $currentDate);
+        $stmt->execute();
+        $details['quizzes'] = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+        $stmt->close();
+    
+        // Fetch files
+        $stmt = $conn->prepare("SELECT title, file_name, file_type, file_size, file_path FROM file_storage WHERE c_name = ? AND id = ?");
+        $stmt->bind_param("si", $courseName, $userId);
+        $stmt->execute();
+        $details['files'] = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    
+        return $details;
+    }
 
-    // Fetch quizzes
-    $stmt = $conn->prepare("SELECT q_title, q_description, q_date FROM quiz WHERE c_name = ? AND user_id = ?");
-    $stmt->bind_param("si", $courseName, $userId);
-    $stmt->execute();
-    $details['quizzes'] = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    $courseDetails = getCourseDetails($conn, $courseName, $userId);
 
-    // Fetch files
-    $stmt = $conn->prepare("SELECT title, file_name, file_type, file_size, file_path FROM file_storage WHERE c_name = ? AND id = ?");
-    $stmt->bind_param("si", $courseName, $userId);
-    $stmt->execute();
-    $details['files'] = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    // Handle course deletion
+    if (isset($_POST['delete_course'])) {
+        $stmt = $conn->prepare("DELETE FROM assignment WHERE c_name = ?");
+        $stmt->bind_param("s", $courseName);
+        $stmt->execute();
+        $stmt->close();
 
-    return $details;
+        $stmt = $conn->prepare("DELETE FROM quiz WHERE c_name = ?");
+        $stmt->bind_param("s", $courseName);
+        $stmt->execute();
+        $stmt->close();
+
+        $stmt = $conn->prepare("DELETE FROM course WHERE c_name = ?");
+        $stmt->bind_param("s", $courseName);
+        $stmt->execute();
+        $stmt->close();
+
+        echo "<script>alert('Course and related assignments and quizzes deleted successfully!'); window.location.href='index.php';</script>";
+    } 
 }
 
 $courses = getCourses($conn, $userId);
@@ -144,12 +180,54 @@ $dayAfterTomorrowTasks = getAssignmentsAndQuizzes($conn, $userId, $dayAfterTomor
         .assignments input[type="checkbox"] {
             margin-right: 10px;
         }
+        .course-box {
+            margin-bottom: 20px;
+        }
+        .course-box a {
+            display: block;
+            padding: 10px;
+            background-color: #007BFF;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 4px;
+            text-align: center;
+        }
+        .course-box a:hover {
+            background-color: #0056b3;
+        }
+        .add-event-button {
+            display: block;
+            margin: 20px 0;
+            padding: 10px 20px;
+            background-color: #28a745;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 4px;
+            text-align: center;
+        }
+        .add-event-button:hover {
+            background-color: #218838;
+        }
+        .delete-button {
+            display: block;
+            margin: 20px 0;
+            padding: 10px 20px;
+            background-color: #dc3545;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 4px;
+            text-align: center;
+        }
+        .delete-button:hover {
+            background-color: #c82333;
+        }
     </style>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div class="container">
         <h1>Welcome to Your Dashboard</h1>
+        <a href="addEvent.php" class="add-event-button">Add Event</a>
         <div class="courses">
             <h2>Your Courses</h2>
             <div class="course-list">
@@ -218,6 +296,9 @@ $dayAfterTomorrowTasks = getAssignmentsAndQuizzes($conn, $userId, $dayAfterTomor
                 <?php endif; ?>
                 <a href="upload.php" class="upload-button">Upload Files</a>
             </div>
+            <form method="POST">
+                <button type="submit" name="delete_course" class="delete-button">Delete Course</button>
+            </form>
         </div>
         <?php endif; ?>
     </div>
