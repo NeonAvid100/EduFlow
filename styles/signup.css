@@ -1,11 +1,9 @@
-/* General Reset */
 *{
     margin: 0;
     padding: 0;
     box-sizing: border-box;
   }
   
-  /* Background Image */
   body {
     background: url('../images/Signup.jpg') no-repeat center center fixed;
     background-size: cover;
@@ -22,8 +20,7 @@
     padding: 40px;
     border-radius: 8px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    max-width: 400px;
-    width: 100%;
+    max-width: 600px;
   }
   
   h2 {
@@ -31,8 +28,12 @@
     margin-bottom: 30px;
     color: #3d84ff;
   }
+
+  input::placeholder {
+    color: #aaa; 
+    opacity: 1;
+  }
   
-  /* Input Fields */
   .input-group {
     margin-bottom: 20px;
   }
@@ -57,7 +58,6 @@
     outline: none;
   }
   
-  /* Buttons */
   button {
     width: 100%;
     padding: 12px;
@@ -72,8 +72,7 @@
   button:hover {
     background-color: #3d84ff;
   }
-  
-  /* Links */
+
   .links {
     margin-top: 15px;
     text-align: center;

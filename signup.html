@@ -12,20 +12,28 @@
       <h2>Create Account</h2>
       <form action="login.html" method="POST">
         <div class="input-group">
-          <label for="name">your name</label>
-          <input type="text" id="name" name="name" required>
+          <label for="name"><b>Your Name:</b></label>
+          <input type="text" id="name" name="name" placeholder="enter your name" required>
         </div>
         <div class="input-group">
-          <label for="email">email</label>
-          <input type="email" id="email" name="email" required>
+          <label for="name"><b>Username:</b></label>
+          <input type="text" id="name" name="name" placeholder="enter your username" required>
         </div>
         <div class="input-group">
-          <label for="password">password</label>
-          <input type="password" id="password" name="password" required>
+          <label for="email"><b>Email:</b></label>
+          <input type="email" id="email" name="email" placeholder="enter your email" required>
         </div>
         <div class="input-group">
-          <label for="confirm-password">re-enter password</label>
-          <input type="password" id="confirm-password" name="confirm-password" required>
+          <label for="contact-number"><b>Contact No:</b></label>
+          <input type="tel" id="contact-number" name="contact-number" placeholder="enter your phone number" required>
+        </div>
+        <div class="input-group">
+          <label for="password"><b>Set Password</b></label>
+          <input type="password" id="password" name="password" placeholder="enter your password" required>
+        </div>
+        <div class="input-group">
+          <label for="confirm-password"><b>Confirm password</b></label>
+          <input type="password" id="confirm-password" name="confirm-password" placeholder="re-enter your password" required>
         </div>
         <button type="submit" class="register-btn">REGISTER</button>
       </form>
