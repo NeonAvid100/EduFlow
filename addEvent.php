@@ -69,87 +69,73 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Add Event</title>
     <link rel="stylesheet" href="styles.css">
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-        }
-        .container {
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            width: 400px;
-        }
-        h1 {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-        form {
-            display: flex;
-            flex-direction: column;
-        }
-        label {
-            margin-bottom: 5px;
-        }
-        input, select, textarea {
-            margin-bottom: 15px;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-        }
-        button {
-            padding: 10px;
-            background-color: #007BFF;
-            color: #fff;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-        button:hover {
-            background-color: #0056b3;
-        }
-    </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Add Event</h1>
-        <form method="POST">
-            <label for="event_type">Event Type</label>
-            <select id="event_type" name="event_type" required>
-                <option value="course">Course</option>
-                <option value="assignment">Assignment</option>
-                <option value="quiz">Quiz</option>
-            </select>
+<div class="container-xxl py-5" id="add-event">
+    <div class="container py-5 px-lg-5">
+        <div class="text-center wow fadeInUp" data-wow-delay="0.1s">
+            <h5 class="text-primary-gradient fw-medium">Add Event</h5>
+            <h1 class="mb-5">Create a New Event</h1>
+        </div>
+        <div class="row justify-content-center">
+            <div class="col-lg-9">
+                <div class="wow fadeInUp" data-wow-delay="0.3s">
+                    <form method="POST">
+                        <div class="row g-3">
+                            <div class="col-12">
+                                <div class="form-floating">
+                                    <label for="event_type"></label>
+                                    <select id="event_type" name="event_type" required class="form-control" required>
+                                        <option value="course">Course</option>
+                                        <option value="assignment">Assignment</option>
+                                        <option value="quiz">Quiz</option>
+                                    </select>
+                                </div>
+                            </div>
 
-            <div id="course_name_section">
-                <label for="course_name">Course Name</label>
-                <select id="course_name" name="course_name">
-                    <?php foreach ($courses as $course): ?>
-                        <option value="<?= htmlspecialchars($course['c_name']) ?>"><?= htmlspecialchars($course['c_name']) ?></option>
-                    <?php endforeach; ?>
-                </select>
+                            <div class="col-12" id="course_name_section">
+                                <div class="form-floating">
+                                    <label for="course_name">Course Name</label>
+                                    <select id="course_name" name="course_name" class="form-control">
+                                        <?php foreach ($courses as $course): ?>
+                                            <option value="<?= htmlspecialchars($course['c_name']) ?>"><?= htmlspecialchars($course['c_name']) ?></option>
+                                        <?php endforeach; ?>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="col-12">
+                                <div class="form-floating">
+                                    <label for="title">Title</label>
+                                    <input type="text" id="title" name="title" class="form-control" required>
+                                </div>
+                            </div>
+
+                            <div class="col-12">
+                                <div class="form-floating">
+                                    <label for="question">Question/Description</label>
+                                    <textarea id="question" name="question" class="form-control" rows="4" required></textarea>
+                                </div>
+                            </div>
+
+                            <div class="col-12" id="date_section">
+                                <div class="form-floating">
+                                    <label for="date">Date</label>
+                                    <input type="date" id="date" name="date" class="form-control">
+                                </div>
+                            </div>
+
+                            <div class="col-12 text-center">
+                                <button class="btn btn-primary-gradient rounded-pill py-3 px-5" type="submit">Add Event</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
             </div>
-
-            <label for="title">Title</label>
-            <input type="text" id="title" name="title" required>
-
-            <label for="question">Question/Description</label>
-            <textarea id="question" name="question" rows="4" required></textarea>
-
-            <div id="date_section">
-                <label for="date">Date</label>
-                <input type="date" id="date" name="date">
-            </div>
-            <button type="submit">Add Event</button>
-        </form>
+        </div>
     </div>
+</div>
+
 
     <script>
         document.getElementById('event_type').addEventListener('change', function() {
