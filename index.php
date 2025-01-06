@@ -19,8 +19,6 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
-$userId = $_SESSION['user_id'];
-
 // Fetch courses for the logged-in user
 function getCourses($conn, $userId) {
     $stmt = $conn->prepare("SELECT c_id, c_name FROM course WHERE id = ?");
@@ -35,7 +33,13 @@ function deletePastQuizzes($conn) {
     $stmt = $conn->prepare("DELETE FROM quiz WHERE q_date < ?");
     $stmt->bind_param("s", $currentDate);
     $stmt->execute();
+    $stmt->close(); // Close the statement to free resources
 }
+
+// Execute deletePastQuizzes function
+deletePastQuizzes($conn);
+
+$userId = $_SESSION['user_id'];
 
 // Fetch assignments, quizzes, and files for a specific course
 if (isset($_GET['course_name'])) {
@@ -160,7 +164,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $date = $_POST['date'] ?? null;
 
     if ($eventType == 'course') {
-        $description = $_POST['description'];
+        $description = $_POST['question'];
         $stmt = $conn->prepare("INSERT INTO course (id, c_name, c_description) VALUES (?, ?, ?)");
         $stmt->bind_param("iss", $userId, $title, $description);
     } elseif ($eventType == 'assignment') {
@@ -256,7 +260,7 @@ $total_quizzes = $quizzes['total_quizzes'];
     <link href="css/style.css" rel="stylesheet">
 </head>
 <body data-bs-spy="scroll" data-bs-target=".navbar" data-bs-offset="51">
-    <div class="container-xxl bg-white p-0">
+    <div class="container-xxl bg-white p-0" style="background-color: white;">
         <!-- Spinner Start -->
         <div id="spinner" class="show bg-white position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center">
             <div class="spinner-grow text-primary" style="width: 3rem; height: 3rem;" role="status">
@@ -331,11 +335,11 @@ $total_quizzes = $quizzes['total_quizzes'];
               </div>
               <div class="col-lg-4 d-flex justify-content-center justify-content-lg-end wow fadeInUp" data-wow-delay="0.3s">
                   <div class="owl-carousel screenshot-carousel">
-                      <img class="img-fluid" src="img/screenshot-1.png" alt="">
-                      <img class="img-fluid" src="img/screenshot-2.png" alt="">
-                      <img class="img-fluid" src="img/screenshot-3.png" alt="">
-                      <img class="img-fluid" src="img/screenshot-4.png" alt="">
-                      <img class="img-fluid" src="img/screenshot-5.png" alt="">
+                            <img class="img-fluid" src="images/screenshot-1.png" alt="">
+                            <img class="img-fluid" src="images/screenshot-2.png" alt="">
+                            <img class="img-fluid" src="images/screenshot-3.png" alt="">
+                            <img class="img-fluid" src="images/screenshot-4.png" alt="">
+                            <img class="img-fluid" src="images/screenshot-5.png" alt="">
                   </div>
               </div>
           </div>
@@ -380,7 +384,7 @@ $total_quizzes = $quizzes['total_quizzes'];
                     <ul class="list-unstyled">
                         <?php foreach ($courseDetails['assignments'] as $assignment): ?>
                         <li class="d-flex justify-content-between mb-3">
-                            <label class="checkbox-container" style="position:relative; display: inline-block; cursor: pointer; font-size: 16px; padding-left: 30px; line-height: 20px;">
+                            <label class="checkbox-container" style="position:relative; display: inline-block; cursor: pointer; font-size: 16px; line-height: 20px;">
                                 <input type="checkbox" name="completed_assignments[]" value="<?= $assignment['assignment_id'] ?>">
                                 <strong><?= htmlspecialchars($assignment['title']) ?>:</strong> <?= htmlspecialchars($assignment['question']) ?> (Deadline: <?= htmlspecialchars($assignment['deadline']) ?>)
                             </label>
@@ -398,7 +402,7 @@ $total_quizzes = $quizzes['total_quizzes'];
                 <?php if (count($courseDetails['quizzes']) > 0): ?>
                 <ul class="list-unstyled">
                     <?php foreach ($courseDetails['quizzes'] as $quiz): ?>
-                    <li class="d-flex justify-content-between mb-3">
+                    <li class="d-flex mb-3">
                         <strong><?= htmlspecialchars($quiz['q_title']) ?>:</strong> <?= htmlspecialchars($quiz['q_description']) ?> (Date: <?= htmlspecialchars($quiz['q_date']) ?>)
                     </li>
                     <?php endforeach; ?>
@@ -414,7 +418,7 @@ $total_quizzes = $quizzes['total_quizzes'];
                     <ul>
                         <?php foreach ($courseDetails['files'] as $file): ?>
                             <li>
-                                <strong><?= htmlspecialchars($file['title']) ?>:</strong> <?= htmlspecialchars($file['file_name']) ?> (<?= htmlspecialchars($file['file_type']) ?>, <?= htmlspecialchars($file['file_size']) ?> bytes)
+                                <strong><?= htmlspecialchars($file['title']) ?>:</strong> <?= htmlspecialchars($file['file_name']) ?> 
                                 <a href="<?= htmlspecialchars($file['file_path']) ?>" download>Download</a>
                             </li>
                         <?php endforeach; ?>
@@ -422,17 +426,16 @@ $total_quizzes = $quizzes['total_quizzes'];
                 <?php else: ?>
                     <p>No files available for this course.</p>
                 <?php endif; ?>
-                <a href="upload.php" class="upload-button">Upload Files</a>
-            </div>
-        <?php endif; ?>
-        <form method="POST">
+                <form method="POST">
                 <button type="submit" name="delete_course" class="btn btn-danger rounded-pill py-2 px-4 mt-4">Delete Course</button>
             </form>
+            </div>
+        <?php endif; ?>
     </div>
 </div>
 
 
-<div class="container-xxl py-5" id="feature" style="margin-bottom: 200px;">
+<div class="container-xxl py-5" id="feature" style="background-color:white;">
     <div class="container py-5 px-lg-5">
         <div class="text-center wow fadeInUp" data-wow-delay="0.1s">
             <h5 class="text-primary-gradient fw-medium">Upcoming Tasks</h5>
@@ -484,7 +487,7 @@ $total_quizzes = $quizzes['total_quizzes'];
     </div>
 </div>
 
-<div class="container-xxl py-5" id="pricing">
+<div class="container-xxl py-5" id="pricing" style="background-color:white;">
     <div class="container py-5 px-lg-5">
         <div class="text-center wow fadeInUp" data-wow-delay="0.1s">
             <h5 class="text-primary-gradient fw-medium">Curricular Activities</h5>
@@ -518,7 +521,7 @@ $total_quizzes = $quizzes['total_quizzes'];
 
 
 
-<div class="container-xxl py-5" id="review" style="margin-bottom:50px;">
+<div class="container-xxl py-5" id="review" style="background-color:white;">
     <div class="container py-5 px-lg-5">
         <div class="text-center wow fadeInUp" data-wow-delay="0.1s">
             <h5 class="text-primary-gradient fw-medium">Add Notions</h5>
@@ -605,7 +608,7 @@ $total_quizzes = $quizzes['total_quizzes'];
             }
         });
     </script>
-    <div class="container-xxl py-5" id="upload-files" style="margin-bottom:50px;">
+    <div class="container-xxl py-5" id="upload-files" style="background-color:white;">
     <div class="container py-5 px-lg-5">
         <div class="text-center wow fadeInUp" data-wow-delay="0.1s">
             <h5 class="text-primary-gradient fw-medium">Upload Files</h5>
@@ -655,7 +658,7 @@ $total_quizzes = $quizzes['total_quizzes'];
         </div>
     </div>
 </div>
-<div class="container-xxl py-5" id="upload-files" style="margin-bottom:100px;">
+<div class="container-xxl py-5" id="upload-files" style="background-color:white;">
     <div class="container py-5 px-lg-5">
         <div class="text-center wow fadeInUp" data-wow-delay="0.1s">
             <h5 class="text-primary-gradient fw-medium">Upload Event</h5>
@@ -717,7 +720,7 @@ $total_quizzes = $quizzes['total_quizzes'];
                 <div class="row g-5">
                     <div class="col-md-6 col-lg-3">
                         <h4 class="text-white mb-4">Address</h4>
-                        <p><i class="fa fa-map-marker-alt me-3"></i>123 Street, New York, USA</p>
+                        <p><i class="fa fa-map-marker-alt me-3"></i>CSE470, Group 8</p>
                         <p><i class="fa fa-phone-alt me-3"></i>+012 345 67890</p>
                         <p><i class="fa fa-envelope me-3"></i>info@example.com</p>
                         <div class="d-flex pt-2">
